@@ -2,6 +2,7 @@
  * Created by rockyl on 2020-03-16.
  */
 
+import path from 'path'
 import glob from 'glob'
 import chalk from 'chalk'
 import fs from 'fs'
@@ -61,6 +62,7 @@ export function generateMetaFile(file) {
 	let meta = {
 		ver: '1.0.1',
 		uuid: generateUUID(),
+		extname: path.extname(file),
 	};
 
 	saveMetaFile(file, meta);

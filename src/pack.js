@@ -9,7 +9,7 @@ import fs from "fs-extra";
 import glob from "glob";
 import {compile} from "./compile";
 import {getDoc} from "./doc";
-import {packImages} from "./sheet-pack";
+import packSheet from "sheet-packer";
 
 const releasePath = 'dist';
 const assetProtocol = 'asset://';
@@ -24,11 +24,11 @@ export async function pack(options) {
 	let projectReleasePath = path.join(releasePath, releaseVersion);
 	await fs.ensureDir(projectReleasePath);
 
-	//const bundleFile = await compileBundle(options, manifest, projectReleasePath);
+	const bundleFile = await compileBundle(options, manifest, projectReleasePath);
 
 	await packSheets(projectReleasePath);
-	//await parseIndexHtml(projectReleasePath, bundleFile);
-	//await copyFiles(projectReleasePath);
+	await parseIndexHtml(projectReleasePath, bundleFile);
+	await copyFiles(projectReleasePath);
 }
 
 async function compileBundle(options, manifest, projectReleasePath) {
@@ -59,7 +59,7 @@ async function packSheets(projectReleasePath) {
 		let doc = getDoc(sceneContent);
 		let assets = doc.assets;
 		let files = assets.map(asset => asset.url).filter(asset => asset.endsWith('.png'));
-		let {sheets, singles} = await packSheet(files, {maxSize: 512});
+		let {sheets, singles} = await packSheet(files, {});
 
 		//console.log(assets, sheets, singles);
 		let sheetIndex = 0;

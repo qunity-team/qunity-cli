@@ -4,15 +4,14 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var path$1 = _interopDefault(require('path'));
 var glob$1 = _interopDefault(require('glob'));
 var chalk = _interopDefault(require('chalk'));
 var fs$2 = _interopDefault(require('fs'));
 var uuid = require('uuid');
 var chokidar = _interopDefault(require('chokidar'));
 var child_process = require('child_process');
-var crypto = require('crypto');
-var crypto__default = _interopDefault(crypto);
-var path$1 = _interopDefault(require('path'));
+var crypto = _interopDefault(require('crypto'));
 var serveHandler = _interopDefault(require('serve-handler'));
 var http = _interopDefault(require('http'));
 var https = _interopDefault(require('https'));
@@ -25,7 +24,7 @@ var commonjs = _interopDefault(require('@rollup/plugin-commonjs'));
 var json = _interopDefault(require('@rollup/plugin-json'));
 var chalk$1 = _interopDefault(require('chalk/source'));
 var fs$3 = _interopDefault(require('fs-extra'));
-require('uuid/v4');
+var packSheet = _interopDefault(require('sheet-packer'));
 
 /**
  * Created by rockyl on 2018/7/5.
@@ -90,7 +89,7 @@ function getMd5(fileOrBuffer) {
 		buffer = fs$2.readFileSync(fileOrBuffer);
 	}
 
-	let hash = crypto__default.createHash('md5');
+	let hash = crypto.createHash('md5');
 	hash.update(buffer);
 	return hash.digest('hex');
 }
@@ -458,6 +457,7 @@ function generateMetaFile(file) {
 	let meta = {
 		ver: '1.0.1',
 		uuid: uuid.v4(),
+		extname: path$1.extname(file),
 	};
 
 	saveMetaFile(file, meta);
@@ -818,11 +818,23 @@ async function pack(options) {
 	let projectReleasePath = path$1.join(releasePath, releaseVersion);
 	await fs$3.ensureDir(projectReleasePath);
 
-	//const bundleFile = await compileBundle(options, manifest, projectReleasePath);
+	const bundleFile = await compileBundle(options, manifest, projectReleasePath);
 
 	await packSheets(projectReleasePath);
-	//await parseIndexHtml(projectReleasePath, bundleFile);
-	//await copyFiles(projectReleasePath);
+	await parseIndexHtml(projectReleasePath, bundleFile);
+	await copyFiles(projectReleasePath);
+}
+
+async function compileBundle(options, manifest, projectReleasePath) {
+	let bundleFile = path$1.join(projectReleasePath, 'index.min.js');
+	let compileOptions = {
+		prod: options.prod,
+		outputFile: bundleFile,
+		manifest,
+	};
+	await compile(compileOptions);
+
+	return bundleFile;
 }
 
 async function packSheets(projectReleasePath) {
@@ -837,7 +849,7 @@ async function packSheets(projectReleasePath) {
 		let doc = getDoc(sceneContent);
 		let assets = doc.assets;
 		let files = assets.map(asset => asset.url).filter(asset => asset.endsWith('.png'));
-		let {sheets, singles} = await packSheet(files, {maxSize: 512});
+		let {sheets, singles} = await packSheet(files, {});
 
 		//console.log(assets, sheets, singles);
 		let sheetIndex = 0;
@@ -861,6 +873,17 @@ async function packSheets(projectReleasePath) {
 			await fs$3.copy(single, path$1.join(projectReleasePath, single));
 		}
 	}
+}
+
+async function parseIndexHtml(projectReleasePath, bundleFile) {
+	let indexTemplate = await fs$3.readFile('index.html', 'utf-8');
+	let indexContent = indexTemplate.replace('debug/index.js', path$1.relative(projectReleasePath, bundleFile));
+
+	await fs$3.writeFile(path$1.join(projectReleasePath, 'index.html'), indexContent);
+}
+
+async function copyFiles(projectReleasePath) {
+	await fs$3.copyFile('index.html', path$1.join(projectReleasePath, 'index.html'));
 }
 
 exports.childProcess = childProcess;
