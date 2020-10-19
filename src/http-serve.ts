@@ -2,12 +2,12 @@
  * Created by rockyl on 2020-03-17.
  */
 
-import path from 'path'
-import fs from 'fs'
-import chalk from 'chalk'
+import * as path from 'path'
+import * as fs from 'fs-extra'
+import * as chalk from 'chalk'
 import serveHandler from 'serve-handler'
-import http from 'http'
-import https from 'https'
+import * as http from 'http'
+import * as https from 'https'
 
 let publicPath;
 

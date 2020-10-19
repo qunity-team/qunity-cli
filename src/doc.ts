@@ -18,7 +18,7 @@ export function getDoc(source) {
 	}
 
 	let func = new Function('require', 'exports', source);
-	let exports = {};
+	let exports:any = {};
 	func(requireMethod, exports);
 	return exports.doc;
 }

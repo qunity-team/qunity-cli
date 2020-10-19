@@ -10,6 +10,7 @@ import glob from "glob";
 import {compile} from "./compile";
 import {getDoc} from "./doc";
 import packSheet from "sheet-packer";
+import {exit} from "./tools";
 
 const releasePath = 'dist';
 const assetProtocol = 'asset://';
@@ -18,7 +19,7 @@ export async function pack(options) {
 	if (!fs.existsSync('manifest.json')) {
 		exit(`file [manifest.json] not exists`, 1);
 	}
-	let manifest = JSON.parse(fs.readFileSync('manifest.json'));
+	let manifest = fs.readJSONSync('manifest.json');
 
 	let releaseVersion = options.releaseVersion || Date.now().toString();
 	let projectReleasePath = path.join(releasePath, releaseVersion);

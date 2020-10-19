@@ -3,8 +3,8 @@
  */
 
 import {spawn} from 'child_process';
-import crypto from 'crypto';
-import fs from "fs";
+import * as crypto from 'crypto';
+import * as fs from "fs-extra";
 
 export function exit(err, code = 1) {
 	console.error(err);
@@ -12,7 +12,7 @@ export function exit(err, code = 1) {
 }
 
 export function childProcess(cmd, params, cwd, printLog = true) {
-	let options = {};
+	let options:any = {};
 	if (cwd) {
 		options.cwd = cwd;
 	}
@@ -48,7 +48,7 @@ export function childProcessSync(cmd, params, cwd, printLog = true) {
 }
 
 export function gitClone(url, path) {
-	return childProcessSync('git', ['clone', url, path]);
+	return childProcessSync('git', ['clone', url, path], path);
 }
 
 export function npmInstall(path) {

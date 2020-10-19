@@ -2,8 +2,8 @@
  * Created by rockyl on 2020-03-18.
  */
 
-const ts = require('typescript');
-const fs = require('fs');
+import * as ts from 'typescript';
+import * as fs from 'fs-extra';
 
 const {
 	ClassDeclaration, EnumDeclaration, ExportKeyword, DefaultKeyword,
@@ -45,7 +45,7 @@ export function generateDeclaration(scriptFile) {
 	let enums = [];
 	let components = [];
 	let declaration;
-	ts.forEachChild(sourceFile, function (node) {
+	ts.forEachChild(sourceFile, function (node:any) {
 		switch (node.kind) {
 			case ClassDeclaration:
 				if (
@@ -77,7 +77,7 @@ export function generateDeclaration(scriptFile) {
 								}
 								break;
 							case MethodDeclaration:
-								let method = {
+								let method:any = {
 									name,
 								};
 								putComment(member, method);
@@ -108,7 +108,7 @@ export function generateDeclaration(scriptFile) {
 				putComment(node, declaration);
 
 				for (let member of node.members) {
-					let item = {
+					let item:any = {
 						label: member.name.text,
 					};
 					let defaultValue = getDefaultValue(member);
@@ -126,7 +126,7 @@ export function generateDeclaration(scriptFile) {
 		return null;
 	});
 
-	let result = {};
+	let result:any = {};
 	if (enums.length > 0) {
 		result.enums = enums;
 	}
@@ -175,7 +175,7 @@ function getType(node) {
 	}
 }
 
-function getDefaultValue(node, preType) {
+function getDefaultValue(node, preType?) {
 	if (node.initializer) {
 		let value, type, init, initializer = node.initializer;
 		switch (initializer.kind) {
@@ -219,7 +219,7 @@ function getDefaultValue(node, preType) {
 				type = init.type;
 				value = init.value;
 		}
-		let dv = {
+		let dv:any = {
 			value,
 		};
 		if (type !== undefined) {
@@ -295,7 +295,7 @@ function getProp(node) {
 		}
 	}
 
-	let prop = {
+	let prop:any = {
 		name,
 		type,
 	};

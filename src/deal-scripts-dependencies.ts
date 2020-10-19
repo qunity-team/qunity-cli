@@ -2,9 +2,9 @@
  * Created by rockyl on 2020-03-16.
  */
 
-const fs = require('fs');
-const path = require('path');
-const glob = require('glob');
+import * as fs from 'fs-extra';
+import * as path from 'path';
+import * as glob from 'glob';
 
 const targetId = 'register-scripts';
 
@@ -49,7 +49,7 @@ ${scriptsList.join('\n')}
 `;
 }
 
-export function dealScriptsDependencies(options) {
+export function dealScriptsDependencies() {
 	return {
 		name: 'deal-scripts-dependencies',
 

@@ -2,18 +2,18 @@
  * Created by rockyl on 2020-03-18.
  */
 
-import fs from 'fs'
-import rollup from 'rollup'
+import * as fs from 'fs-extra'
+import * as rollup from 'rollup'
 import typescript from 'typescript'
-import rpt from 'rollup-plugin-typescript';
+import rpt from '@rollup/plugin-typescript';
 import {uglify} from 'rollup-plugin-uglify';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import {dealScriptsDependencies} from "./deal-scripts-dependencies";
-import chalk from "chalk/source";
+import * as chalk from 'chalk'
 import {exit} from "./tools";
-import chokidar from "chokidar";
+import * as chokidar from "chokidar";
 
 const devOutputFile = 'debug/index.js';
 const prodOutputFile = 'debug/index.min.js';
@@ -70,8 +70,8 @@ export async function compile(options, watch = false) {
 				browser: true,
 			}),
 			rpt({
-				typescript,
-				include: ['src/**/*.ts+(|x)', 'assets/**/*.ts+(|x)']
+				//typescript,
+				include: ['src/**/*.ts+(|x)', 'assets/**/*.ts+(|x)'],
 			}),
 			commonjs(),
 		],
@@ -82,7 +82,7 @@ export async function compile(options, watch = false) {
 		inputOptions.plugins.push(uglify({}));
 	}
 
-	let outputOptions = {
+	let outputOptions:any = {
 		file: outputFile,
 		format: 'umd',
 		name: moduleName,
@@ -91,7 +91,7 @@ export async function compile(options, watch = false) {
 	};
 
 	if (watch) {
-		let watchOptions = {
+		let watchOptions:any = {
 			...inputOptions,
 			output: outputOptions,
 		};

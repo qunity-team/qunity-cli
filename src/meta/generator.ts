@@ -3,11 +3,11 @@
  */
 
 import path from 'path'
-import glob from 'glob'
-import chalk from 'chalk'
-import fs from 'fs'
+import * as glob from 'glob'
+import * as chalk from 'chalk'
+import * as fs from 'fs-extra'
 import {v4 as generateUUID} from "uuid"
-import chokidar from 'chokidar'
+import * as chokidar from 'chokidar'
 import {exit, getMd5} from "../tools";
 import {generateDeclaration} from "../ts-declare-generator";
 

@@ -3,8 +3,8 @@
  */
 
 import glob from 'glob'
-import chalk from 'chalk'
-import fs from 'fs'
+import * as chalk from 'chalk'
+import fs from 'fs-extra'
 import {exit} from "../tools";
 
 export function clearMetaFiles() {
