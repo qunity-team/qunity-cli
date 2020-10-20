@@ -6,12 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fs = require("fs-extra");
 const chalk = require("chalk");
-const serve_handler_1 = require("serve-handler");
+const serveHandler = require('serve-handler');
 const http = require("http");
 const https = require("https");
 let publicPath;
 function handler(request, response) {
-    return serve_handler_1.default(request, response, {
+    return serveHandler(request, response, {
         public: publicPath,
         headers: [
             {

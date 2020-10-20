@@ -5,7 +5,7 @@
 import * as path from 'path'
 import * as fs from 'fs-extra'
 import * as chalk from 'chalk'
-import serveHandler from 'serve-handler'
+const serveHandler = require('serve-handler')
 import * as http from 'http'
 import * as https from 'https'
 
