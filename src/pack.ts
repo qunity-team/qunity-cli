@@ -4,9 +4,9 @@
  * pack project
  */
 
-import path from "path";
-import fs from "fs-extra";
-import glob from "glob";
+import * as path from "path";
+import * as fs from "fs-extra";
+import * as glob from "glob";
 import {compile} from "./compile";
 import {getDoc} from "./doc";
 import packSheet from "sheet-packer";

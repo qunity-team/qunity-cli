@@ -5,9 +5,9 @@
  * pack project
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = require("path");
-const fs_extra_1 = require("fs-extra");
-const glob_1 = require("glob");
+const path = require("path");
+const fs = require("fs-extra");
+const glob = require("glob");
 const compile_1 = require("./compile");
 const doc_1 = require("./doc");
 const sheet_packer_1 = require("sheet-packer");
@@ -15,13 +15,13 @@ const tools_1 = require("./tools");
 const releasePath = 'dist';
 const assetProtocol = 'asset://';
 async function pack(options) {
-    if (!fs_extra_1.default.existsSync('manifest.json')) {
+    if (!fs.existsSync('manifest.json')) {
         tools_1.exit(`file [manifest.json] not exists`, 1);
     }
-    let manifest = fs_extra_1.default.readJSONSync('manifest.json');
+    let manifest = fs.readJSONSync('manifest.json');
     let releaseVersion = options.releaseVersion || Date.now().toString();
-    let projectReleasePath = path_1.default.join(releasePath, releaseVersion);
-    await fs_extra_1.default.ensureDir(projectReleasePath);
+    let projectReleasePath = path.join(releasePath, releaseVersion);
+    await fs.ensureDir(projectReleasePath);
     const bundleFile = await compileBundle(options, manifest, projectReleasePath);
     await packSheets(projectReleasePath);
     await parseIndexHtml(projectReleasePath, bundleFile);
@@ -29,7 +29,7 @@ async function pack(options) {
 }
 exports.pack = pack;
 async function compileBundle(options, manifest, projectReleasePath) {
-    let bundleFile = path_1.default.join(projectReleasePath, 'index.min.js');
+    let bundleFile = path.join(projectReleasePath, 'index.min.js');
     let compileOptions = {
         prod: options.prod,
         outputFile: bundleFile,
@@ -43,11 +43,11 @@ function assetsTokenFilter(token) {
 }
 async function packSheets(projectReleasePath) {
     let assetsPath = 'assets';
-    let projectReleaseAssetsPath = path_1.default.join(projectReleasePath, 'assets');
-    await fs_extra_1.default.ensureDir(projectReleaseAssetsPath);
-    let sceneFiles = glob_1.default.sync(assetsPath + '/**/*.scene');
+    let projectReleaseAssetsPath = path.join(projectReleasePath, 'assets');
+    await fs.ensureDir(projectReleaseAssetsPath);
+    let sceneFiles = glob.sync(assetsPath + '/**/*.scene');
     for (let sceneFile of sceneFiles) {
-        let sceneContent = await fs_extra_1.default.readFile(sceneFile, 'utf-8');
+        let sceneContent = await fs.readFile(sceneFile, 'utf-8');
         let doc = doc_1.getDoc(sceneContent);
         let assets = doc.assets;
         let files = assets.map(asset => asset.url).filter(asset => asset.endsWith('.png'));
@@ -59,27 +59,27 @@ async function packSheets(projectReleasePath) {
             for (let url of keys) {
                 let asset = assets.find(asset => asset.url === url);
                 if (asset) {
-                    let relativePath = path_1.default.relative('assets', url);
+                    let relativePath = path.relative('assets', url);
                     frames[relativePath] = frames[url];
                     delete frames[url];
                     frames[relativePath].uuid = asset.uuid;
                 }
             }
-            await fs_extra_1.default.writeFile(path_1.default.join(projectReleaseAssetsPath, 'sheet_' + sheetIndex + '.sht'), JSON.stringify(frames));
-            await fs_extra_1.default.writeFile(path_1.default.join(projectReleaseAssetsPath, 'sheet_' + sheetIndex + '.png'), buffer);
+            await fs.writeFile(path.join(projectReleaseAssetsPath, 'sheet_' + sheetIndex + '.sht'), JSON.stringify(frames));
+            await fs.writeFile(path.join(projectReleaseAssetsPath, 'sheet_' + sheetIndex + '.png'), buffer);
             sheetIndex++;
         }
         for (let single of singles) {
-            await fs_extra_1.default.copy(single, path_1.default.join(projectReleasePath, single));
+            await fs.copy(single, path.join(projectReleasePath, single));
         }
     }
 }
 async function parseIndexHtml(projectReleasePath, bundleFile) {
-    let indexTemplate = await fs_extra_1.default.readFile('index.html', 'utf-8');
-    let indexContent = indexTemplate.replace('debug/index.js', path_1.default.relative(projectReleasePath, bundleFile));
-    await fs_extra_1.default.writeFile(path_1.default.join(projectReleasePath, 'index.html'), indexContent);
+    let indexTemplate = await fs.readFile('index.html', 'utf-8');
+    let indexContent = indexTemplate.replace('debug/index.js', path.relative(projectReleasePath, bundleFile));
+    await fs.writeFile(path.join(projectReleasePath, 'index.html'), indexContent);
 }
 async function copyFiles(projectReleasePath) {
-    await fs_extra_1.default.copyFile('index.html', path_1.default.join(projectReleasePath, 'index.html'));
+    await fs.copyFile('index.html', path.join(projectReleasePath, 'index.html'));
 }
 //# sourceMappingURL=pack.js.map
