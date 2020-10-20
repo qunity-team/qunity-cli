@@ -5,15 +5,16 @@
 import * as fs from 'fs-extra'
 import * as rollup from 'rollup'
 import typescript from 'typescript'
-import rpt from '@rollup/plugin-typescript';
 import {uglify} from 'rollup-plugin-uglify';
 import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import json from '@rollup/plugin-json';
 import {dealScriptsDependencies} from "./deal-scripts-dependencies";
 import * as chalk from 'chalk'
 import {exit} from "./tools";
 import * as chokidar from "chokidar";
+
+const json = require('@rollup/plugin-json');
+const rpt = require('@rollup/plugin-typescript');
+const commonjs = require('@rollup/plugin-commonjs');
 
 const devOutputFile = 'debug/index.js';
 const prodOutputFile = 'debug/index.min.js';
@@ -49,7 +50,7 @@ export async function compile(options, watch = false) {
 	let {name: moduleName, engine: adaptor, externals: manifestExternals} = options.manifest;
 	let {prod, outputFile} = options;
 
-	if(!outputFile){
+	if (!outputFile) {
 		outputFile = prod ? prodOutputFile : devOutputFile;
 	}
 
@@ -82,7 +83,7 @@ export async function compile(options, watch = false) {
 		inputOptions.plugins.push(uglify({}));
 	}
 
-	let outputOptions:any = {
+	let outputOptions: any = {
 		file: outputFile,
 		format: 'umd',
 		name: moduleName,
@@ -91,7 +92,7 @@ export async function compile(options, watch = false) {
 	};
 
 	if (watch) {
-		let watchOptions:any = {
+		let watchOptions: any = {
 			...inputOptions,
 			output: outputOptions,
 		};

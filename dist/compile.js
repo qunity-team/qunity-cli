@@ -5,15 +5,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
 const rollup = require("rollup");
-const plugin_typescript_1 = require("@rollup/plugin-typescript");
 const rollup_plugin_uglify_1 = require("rollup-plugin-uglify");
 const plugin_node_resolve_1 = require("@rollup/plugin-node-resolve");
-const plugin_commonjs_1 = require("@rollup/plugin-commonjs");
-const plugin_json_1 = require("@rollup/plugin-json");
 const deal_scripts_dependencies_1 = require("./deal-scripts-dependencies");
 const chalk = require("chalk");
 const tools_1 = require("./tools");
 const chokidar = require("chokidar");
+const json = require('@rollup/plugin-json');
+const rpt = require('@rollup/plugin-typescript');
+const commonjs = require('@rollup/plugin-commonjs');
 const devOutputFile = 'debug/index.js';
 const prodOutputFile = 'debug/index.min.js';
 const defaultOptions = {
@@ -53,16 +53,16 @@ async function compile(options, watch = false) {
     let inputOptions = {
         input: inputFile,
         plugins: [
-            plugin_json_1.default(),
+            json(),
             deal_scripts_dependencies_1.dealScriptsDependencies(),
             plugin_node_resolve_1.default({
                 browser: true,
             }),
-            plugin_typescript_1.default({
+            rpt({
                 //typescript,
                 include: ['src/**/*.ts+(|x)', 'assets/**/*.ts+(|x)'],
             }),
-            plugin_commonjs_1.default(),
+            commonjs(),
         ],
         external: Object.keys(externals),
     };
