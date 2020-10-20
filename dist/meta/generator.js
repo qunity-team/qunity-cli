@@ -3,7 +3,7 @@
  * Created by rockyl on 2020-03-16.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = require("path");
+const path = require("path");
 const glob = require("glob");
 const chalk = require("chalk");
 const fs = require("fs-extra");
@@ -59,7 +59,7 @@ function generateMetaFile(file) {
     let meta = {
         ver: '1.0.1',
         uuid: uuid_1.v4(),
-        extname: path_1.default.extname(file),
+        extname: path.extname(file),
     };
     saveMetaFile(file, meta);
     console.log(chalk.green('generate ' + file + '.meta'));

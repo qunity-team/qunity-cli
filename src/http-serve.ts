@@ -10,21 +10,26 @@ import * as http from 'http'
 import * as https from 'https'
 
 let publicPath;
+const faviconFile = fs.readFileSync(path.dirname(__dirname) + '/assets/favicon.ico');
 
 function handler(request, response) {
-	return serveHandler(request, response, {
-		public: publicPath,
-		headers: [
-			{
-				source: '**/*',
-				headers: [
-					{
-						key: 'Access-Control-Allow-Origin', value: '*',
-					}
-				]
-			}
-		]
-	});
+	if(request.url === '/favicon.ico'){
+		response.end(faviconFile);
+	}else{
+		return serveHandler(request, response, {
+			public: publicPath,
+			headers: [
+				{
+					source: '**/*',
+					headers: [
+						{
+							key: 'Access-Control-Allow-Origin', value: '*',
+						}
+					]
+				}
+			]
+		});
+	}
 }
 
 export function startHttpServe(options) {

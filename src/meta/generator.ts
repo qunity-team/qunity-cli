@@ -2,7 +2,7 @@
  * Created by rockyl on 2020-03-16.
  */
 
-import path from 'path'
+import * as path from 'path'
 import * as glob from 'glob'
 import * as chalk from 'chalk'
 import * as fs from 'fs-extra'
