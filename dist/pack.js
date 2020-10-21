@@ -10,8 +10,9 @@ const fs = require("fs-extra");
 const glob = require("glob");
 const compile_1 = require("./compile");
 const doc_1 = require("./doc");
-const sheet_packer_1 = require("sheet-packer");
+const packSheet = require("sheet-packer");
 const tools_1 = require("./tools");
+const node_html_parser_1 = require("node-html-parser");
 const releasePath = 'dist';
 const assetProtocol = 'asset://';
 async function pack(options) {
@@ -23,9 +24,9 @@ async function pack(options) {
     let projectReleasePath = path.join(releasePath, releaseVersion);
     await fs.ensureDir(projectReleasePath);
     const bundleFile = await compileBundle(options, manifest, projectReleasePath);
-    await packSheets(projectReleasePath);
-    await parseIndexHtml(projectReleasePath, bundleFile);
-    await copyFiles(projectReleasePath);
+    //await packSheets(projectReleasePath);
+    const scriptMapping = await parseIndexHtml(projectReleasePath, bundleFile);
+    await copyFiles(projectReleasePath, scriptMapping);
 }
 exports.pack = pack;
 async function compileBundle(options, manifest, projectReleasePath) {
@@ -45,13 +46,13 @@ async function packSheets(projectReleasePath) {
     let assetsPath = 'assets';
     let projectReleaseAssetsPath = path.join(projectReleasePath, 'assets');
     await fs.ensureDir(projectReleaseAssetsPath);
-    let sceneFiles = glob.sync(assetsPath + '/**/*.scene');
+    let sceneFiles = glob.sync(assetsPath + '/**/*.qnt');
     for (let sceneFile of sceneFiles) {
         let sceneContent = await fs.readFile(sceneFile, 'utf-8');
         let doc = doc_1.getDoc(sceneContent);
         let assets = doc.assets;
         let files = assets.map(asset => asset.url).filter(asset => asset.endsWith('.png'));
-        let { sheets, singles } = await sheet_packer_1.default(files, {});
+        let { sheets, singles } = await packSheet(files, {});
         //console.log(assets, sheets, singles);
         let sheetIndex = 0;
         for (let { frames, buffer } of sheets) {
@@ -75,11 +76,49 @@ async function packSheets(projectReleasePath) {
     }
 }
 async function parseIndexHtml(projectReleasePath, bundleFile) {
+    let scriptMapping = {};
     let indexTemplate = await fs.readFile('index.html', 'utf-8');
-    let indexContent = indexTemplate.replace('debug/index.js', path.relative(projectReleasePath, bundleFile));
-    await fs.writeFile(path.join(projectReleasePath, 'index.html'), indexContent);
+    const html = node_html_parser_1.parse(indexTemplate);
+    let scriptEls = html.querySelectorAll('script');
+    for (let scriptEl of scriptEls) {
+        let src = scriptEl.getAttribute('src');
+        if (!src) {
+            continue;
+        }
+        let newSrc = src;
+        if (src === 'debug/index.js') {
+            newSrc = path.relative(projectReleasePath, bundleFile);
+        }
+        else if (src.startsWith('node_modules/')) {
+            let moduleName = src.split('/')[1] + '.js';
+            let scriptPath = 'libs/' + moduleName;
+            scriptMapping[src] = moduleName;
+            newSrc = scriptPath;
+        }
+        if (newSrc !== src) {
+            scriptEl.setAttribute('src', newSrc);
+        }
+    }
+    await fs.writeFile(path.join(projectReleasePath, 'index.html'), html.toString());
+    return scriptMapping;
 }
-async function copyFiles(projectReleasePath) {
-    await fs.copyFile('index.html', path.join(projectReleasePath, 'index.html'));
+async function copyFiles(projectReleasePath, scriptMapping) {
+    let libsPath = path.join(projectReleasePath, 'libs');
+    await fs.ensureDir(libsPath);
+    for (let key in scriptMapping) {
+        await fs.copyFile(key, path.join(libsPath, scriptMapping[key]));
+    }
+    await fs.copyFile('manifest.json', path.join(projectReleasePath, 'manifest.json'));
+    //todo copy assets without **/*.png if pack-sheets
+    let assetsPath = 'assets';
+    await fs.copy(assetsPath, path.join(projectReleasePath, assetsPath), {
+        filter: (src, dest) => {
+            let pass = true;
+            if (src.endsWith('.ts') || src.endsWith('.meta')) {
+                pass = false;
+            }
+            return pass;
+        }
+    });
 }
 //# sourceMappingURL=pack.js.map
