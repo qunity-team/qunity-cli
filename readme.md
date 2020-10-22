@@ -1,5 +1,5 @@
 # Qunit-cli
-cli tool for qunity project
+cli tool for [qunity](https://github.com/qunity-team/qunity) project
 
 ## compile
 ```
