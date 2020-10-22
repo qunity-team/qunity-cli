@@ -5,7 +5,7 @@ const program = require('commander');
 program
 	.version('1.0.0')
 	.description('qunity command line interface')
-	.command('init [tpl]', 'Initialize a project with template').alias('i')
+	.command('create [tpl]', 'Create a project with template').alias('i')
 	.command('meta', 'Generate or clean meta files').alias('m')
 	.command('compile', 'Compile project').alias('c')
 	.command('pack', 'Pack project').alias('p')
