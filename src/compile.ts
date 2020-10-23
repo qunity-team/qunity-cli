@@ -13,7 +13,8 @@ import {exit} from "./tools";
 import * as chokidar from "chokidar";
 
 const json = require('@rollup/plugin-json');
-const rpt = require('@rollup/plugin-typescript');
+//const rpt = require('@rollup/plugin-typescript');
+const rpt = require('rollup-plugin-typescript');
 const commonjs = require('@rollup/plugin-commonjs');
 
 const devOutputFile = 'debug/index.js';

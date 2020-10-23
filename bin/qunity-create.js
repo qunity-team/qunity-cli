@@ -7,7 +7,7 @@ const {create, exit} = require("../dist");
 
 program
 	.option('-t, --template [string]', 'template on github', 'qunity-team/sample-blank')
-	.option('-p, --name [string]', 'project name', 'sample')
+	.option('-n, --name [string]', 'project name', 'sample')
 	.option('-f, --force', 'Delete the old project')
 	.allowUnknownOption(true)
 	.parse(process.argv);
