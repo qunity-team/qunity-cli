@@ -11,7 +11,7 @@ function exit(err, code = 1) {
     process.exit(code);
 }
 exports.exit = exit;
-function childProcess(cmd, params, cwd, printLog = true) {
+function childProcess(cmd, params, cwd = process.cwd(), printLog = true) {
     let options = {};
     if (cwd) {
         options.cwd = cwd;
@@ -44,16 +44,16 @@ function childProcessSync(cmd, params, cwd, printLog = true) {
     });
 }
 exports.childProcessSync = childProcessSync;
-function gitClone(url, path) {
-    return childProcessSync('git', ['clone', url, path], path);
+function gitClone(url, path, cwd) {
+    return childProcessSync('git', ['clone', url, path], cwd);
 }
 exports.gitClone = gitClone;
-function npmInstall(path) {
-    return childProcessSync('npm', ['i'], path);
+function npmInstall(cwd) {
+    return childProcessSync('npm', ['i'], cwd);
 }
 exports.npmInstall = npmInstall;
-function npmRun(path, scriptName) {
-    return childProcessSync('npm', ['run', scriptName], path);
+function npmRun(scriptName, cwd) {
+    return childProcessSync('npm', ['run', scriptName], cwd);
 }
 exports.npmRun = npmRun;
 function getMd5(fileOrBuffer) {

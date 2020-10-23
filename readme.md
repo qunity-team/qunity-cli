@@ -1,6 +1,18 @@
 # Qunit-cli
 cli tool for [qunity](https://github.com/qunity-team/qunity) project
 
+## create
+```
+Usage: qunity create [options]
+
+Options:
+  -t, --template [string]  template on github (default: "qunity-team/sample-blank")
+  -p, --name [string]      project name (default: "sample")
+  -f, --force              Delete the old project
+  -h, --help               display help for command
+```
+create project from template
+
 ## compile
 ```
 Usage: qunity compile [options]
@@ -57,4 +69,4 @@ Options:
 pack project
 
 ## todo
-- [ ] Sub command create
+- [x] Sub command create

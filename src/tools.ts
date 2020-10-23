@@ -11,8 +11,8 @@ export function exit(err, code = 1) {
 	process.exit(code);
 }
 
-export function childProcess(cmd, params, cwd, printLog = true) {
-	let options:any = {};
+export function childProcess(cmd, params, cwd = process.cwd(), printLog = true) {
+	let options: any = {};
 	if (cwd) {
 		options.cwd = cwd;
 	}
@@ -33,7 +33,7 @@ export function childProcess(cmd, params, cwd, printLog = true) {
 	return proc;
 }
 
-export function childProcessSync(cmd, params, cwd, printLog = true) {
+export function childProcessSync(cmd, params, cwd?, printLog = true) {
 	return new Promise((resolve, reject) => {
 		let proc = childProcess(cmd, params, cwd, printLog);
 
@@ -47,16 +47,16 @@ export function childProcessSync(cmd, params, cwd, printLog = true) {
 	});
 }
 
-export function gitClone(url, path) {
-	return childProcessSync('git', ['clone', url, path], path);
+export function gitClone(url, path, cwd?) {
+	return childProcessSync('git', ['clone', url, path], cwd);
 }
 
-export function npmInstall(path) {
-	return childProcessSync('npm', ['i'], path);
+export function npmInstall(cwd?) {
+	return childProcessSync('npm', ['i'], cwd);
 }
 
-export function npmRun(path, scriptName) {
-	return childProcessSync('npm', ['run', scriptName], path);
+export function npmRun(scriptName, cwd?) {
+	return childProcessSync('npm', ['run', scriptName], cwd);
 }
 
 export function getMd5(fileOrBuffer) {
