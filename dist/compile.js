@@ -15,6 +15,7 @@ const json = require('@rollup/plugin-json');
 //const rpt = require('@rollup/plugin-typescript');
 const rpt = require('rollup-plugin-typescript');
 const commonjs = require('@rollup/plugin-commonjs');
+const replace = require('@rollup/plugin-replace');
 const devOutputFile = 'debug/index.js';
 const prodOutputFile = 'debug/index.min.js';
 const defaultOptions = {
@@ -64,6 +65,9 @@ async function compile(options, watch = false) {
                 include: ['src/**/*.ts+(|x)', 'assets/**/*.ts+(|x)'],
             }),
             commonjs(),
+            replace({
+                'process.env.NODE_ENV': JSON.stringify(prod ? 'production' : 'development'),
+            })
         ],
         external: Object.keys(externals),
     };

@@ -3,7 +3,7 @@
  */
 import * as path from 'path'
 import * as fs from 'fs-extra'
-import {exit, gitClone, npmInstall} from "./tools";
+import {exit, gitClone, yarnInstall} from "./tools";
 
 const gitHost = 'https://github.com/'
 const defaultTemplate = 'qunity-team/sample-blank';
@@ -110,9 +110,9 @@ function deleteProcess() {
 }
 
 async function npm() {
-	console.log('Installing node packages...');
-	await npmInstall(path.resolve(projectName));
-	console.log('Installing node packages success...');
+	console.log('Installing packages...');
+	await yarnInstall(path.resolve(projectName));
+	console.log('Installing packages success...');
 }
 
 function windingUp() {

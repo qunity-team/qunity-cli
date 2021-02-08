@@ -51,12 +51,12 @@ export function gitClone(url, path, cwd?) {
 	return childProcessSync('git', ['clone', url, path], cwd);
 }
 
-export function npmInstall(cwd?) {
-	return childProcessSync('npm', ['i'], cwd);
+export function yarnInstall(cwd?) {
+	return childProcessSync('yarn', [], cwd);
 }
 
-export function npmRun(scriptName, cwd?) {
-	return childProcessSync('npm', ['run', scriptName], cwd);
+export function yarnRun(scriptName, cwd?) {
+	return childProcessSync('yarn', ['run', scriptName], cwd);
 }
 
 export function getMd5(fileOrBuffer) {

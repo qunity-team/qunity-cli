@@ -64,6 +64,9 @@ export function generateDeclaration(scriptFile) {
 
 					let prop;
 					for (let member of node.members) {
+						if(!member.name){
+							continue;
+						}
 						let name = member.name.text;
 						if (filterMember(member, name)) {
 							continue;

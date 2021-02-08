@@ -48,14 +48,14 @@ function gitClone(url, path, cwd) {
     return childProcessSync('git', ['clone', url, path], cwd);
 }
 exports.gitClone = gitClone;
-function npmInstall(cwd) {
-    return childProcessSync('npm', ['i'], cwd);
+function yarnInstall(cwd) {
+    return childProcessSync('yarn', [], cwd);
 }
-exports.npmInstall = npmInstall;
-function npmRun(scriptName, cwd) {
-    return childProcessSync('npm', ['run', scriptName], cwd);
+exports.yarnInstall = yarnInstall;
+function yarnRun(scriptName, cwd) {
+    return childProcessSync('yarn', ['run', scriptName], cwd);
 }
-exports.npmRun = npmRun;
+exports.yarnRun = yarnRun;
 function getMd5(fileOrBuffer) {
     let buffer = fileOrBuffer;
     if (typeof fileOrBuffer === 'string') {

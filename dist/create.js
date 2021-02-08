@@ -96,9 +96,9 @@ function deleteProcess() {
     return Promise.all(ps);
 }
 async function npm() {
-    console.log('Installing node packages...');
-    await tools_1.npmInstall(path.resolve(projectName));
-    console.log('Installing node packages success...');
+    console.log('Installing packages...');
+    await tools_1.yarnInstall(path.resolve(projectName));
+    console.log('Installing packages success...');
 }
 function windingUp() {
     fs.removeSync(configFile);

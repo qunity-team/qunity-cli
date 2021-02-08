@@ -55,6 +55,14 @@
     is-module "^1.0.0"
     resolve "^1.17.0"
 
+"@rollup/plugin-replace@^2.3.4":
+  version "2.3.4"
+  resolved "http://npm.dui88.com:80/@rollup%2fplugin-replace/-/plugin-replace-2.3.4.tgz#7dd84c17755d62b509577f2db37eb524d7ca88ca"
+  integrity sha1-fdhMF3VdYrUJV38ts361JNfKiMo=
+  dependencies:
+    "@rollup/pluginutils" "^3.1.0"
+    magic-string "^0.25.7"
+
 "@rollup/plugin-typescript@^6.0.0":
   version "6.0.0"
   resolved "http://npm.dui88.com:80/@rollup%2fplugin-typescript/-/plugin-typescript-6.0.0.tgz#08635d9d04dc3a099ef0150c289ba5735200bc63"
