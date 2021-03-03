@@ -1,6 +1,6 @@
 {
-	"name": "qunity-cli",
-	"version": "1.0.2",
+	"name": "@qunity/cli",
+	"version": "1.0.0",
 	"main": "dist/index.js",
 	"license": "MIT",
 	"bin": {

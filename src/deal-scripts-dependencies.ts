@@ -27,14 +27,15 @@ function getScripts() {
 
 	let scriptsImportList = [];
 	let scriptsList = [];
-	for (let i = 0, li = files.length; i < li; i++) {
-		const file = files[i];
+	let index = 0;
+	for(let file of files){
 		let moduleName = getModuleName(file);
 		if (moduleName) {
 			let localModuleName = '/' + path.relative('./assets', file).replace('.ts', '');
-			scriptsImportList.push(`import {default as script_${i}} from "${file}";`);
-			scriptsList.push(`'${moduleName}': script_${i},`);
-			scriptsList.push(`'${localModuleName}': script_${i},`);
+			scriptsImportList.push(`import {default as script_${index}} from "${file}";`);
+			scriptsList.push(`'uuid://${moduleName}': script_${index},`);
+			scriptsList.push(`'${localModuleName}': script_${index},`);
+			index ++;
 		}
 	}
 
