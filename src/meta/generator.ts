@@ -8,54 +8,54 @@ import * as chalk from 'chalk'
 import * as fs from 'fs-extra'
 import {v4 as generateUUID} from "uuid"
 import * as chokidar from 'chokidar'
-import {exit, getMd5} from "../tools";
-import {generateDeclaration} from "../ts-declare-generator";
+import {exit, getMd5} from "../tools"
+import {generateDeclaration} from "../ts-declare-generator"
 
-let t;
+let t
 
 export function generateMetaFiles(watch = false) {
 	if (fs.existsSync('assets')) {
 		if (watch) {
-			console.log(chalk.blue('start watch assets folder to generate meta files'));
+			console.log(chalk.blue('start watch assets folder to generate meta files'))
 			chokidar.watch('assets').on('all', (event, path) => {
-				//console.log(event, path);
+				//console.log(event, path)
 				if (t) {
-					clearTimeout(t);
-					t = null;
+					clearTimeout(t)
+					t = null
 				}
-				t = setTimeout(executeOnce, 200);
-			});
+				t = setTimeout(executeOnce, 200)
+			})
 		} else {
-			executeOnce();
-			console.log(chalk.cyan('generate meta files successfully'));
+			executeOnce()
+			console.log(chalk.cyan('generate meta files successfully'))
 		}
 	} else {
-		exit('assets folder not exists', 1);
+		exit('assets folder not exists', 1)
 	}
 }
 
 function executeOnce() {
-	let files = glob.sync('assets/**/!(*.meta)');
+	let files = glob.sync('assets/**/!(*.meta)')
 
 	for (let file of files) {
 		if (!fs.existsSync(file + '.meta')) {
-			generateMetaFile(file);
+			generateMetaFile(file)
 		}
 	}
 
-	let tsFiles = glob.sync('assets/**/*.ts');
-	console.time('generateDeclaration>');
+	let tsFiles = glob.sync('assets/**/*.ts')
+	console.time('generateDeclaration>')
 	for (let file of tsFiles) {
-		let meta = JSON.parse(fs.readFileSync(file + '.meta', 'utf-8'));
-		let md5 = getMd5(file);
+		let meta = JSON.parse(fs.readFileSync(file + '.meta', 'utf-8'))
+		let md5 = getMd5(file)
 		if (meta.md5 !== md5) {
-			meta.declaration = generateDeclaration(file);
-			meta.md5 = md5;
+			meta.declaration = generateDeclaration(file)
+			meta.md5 = md5
 
-			saveMetaFile(file, meta);
+			saveMetaFile(file, meta)
 		}
 	}
-	console.timeEnd('generateDeclaration>');
+	console.timeEnd('generateDeclaration>')
 }
 
 export function generateMetaFile(file) {
@@ -63,15 +63,15 @@ export function generateMetaFile(file) {
 		ver: '1.0.1',
 		uuid: generateUUID(),
 		extname: path.extname(file),
-	};
+	}
 
-	saveMetaFile(file, meta);
+	saveMetaFile(file, meta)
 
-	console.log(chalk.green('generate ' + file + '.meta'));
+	console.log(chalk.green('generate ' + file + '.meta'))
 
-	return meta;
+	return meta
 }
 
 function saveMetaFile(file, meta){
-	fs.writeFileSync(file + '.meta', JSON.stringify(meta, null, '\t'));
+	fs.writeFileSync(file + '.meta', JSON.stringify(meta, null, '\t'))
 }

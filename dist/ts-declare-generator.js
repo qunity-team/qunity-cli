@@ -177,7 +177,7 @@ function getDefaultValue(node, preType) {
                 value = node.initializer.name.text;
                 break;
             case ArrayLiteralExpression: //数组暂时不识别
-                //type = 'array';
+                //type = 'array'
                 break;
             case ObjectLiteralExpression:
                 switch (preType) {

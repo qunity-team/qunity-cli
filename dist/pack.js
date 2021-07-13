@@ -10,7 +10,7 @@ const fs = require("fs-extra");
 const glob = require("glob");
 const compile_1 = require("./compile");
 const doc_1 = require("./doc");
-const packSheet = require("sheet-packer");
+//import * as packSheet from "sheet-packer"
 const tools_1 = require("./tools");
 const node_html_parser_1 = require("node-html-parser");
 const releasePath = 'dist';
@@ -24,7 +24,7 @@ async function pack(options) {
     let projectReleasePath = path.join(releasePath, releaseVersion);
     await fs.ensureDir(projectReleasePath);
     const bundleFile = await compileBundle(options, manifest, projectReleasePath);
-    //await packSheets(projectReleasePath);
+    //await packSheets(projectReleasePath)
     const scriptMapping = await parseIndexHtml(projectReleasePath, bundleFile);
     await copyFiles(projectReleasePath, scriptMapping);
 }
@@ -53,7 +53,7 @@ async function packSheets(projectReleasePath) {
         let assets = doc.assets;
         let files = assets.map(asset => asset.url).filter(asset => asset.endsWith('.png'));
         let { sheets, singles } = await packSheet(files, {});
-        //console.log(assets, sheets, singles);
+        //console.log(assets, sheets, singles)
         let sheetIndex = 0;
         for (let { frames, buffer } of sheets) {
             let keys = Object.keys(frames);

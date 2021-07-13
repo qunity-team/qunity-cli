@@ -5,15 +5,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
 const rollup = require("rollup");
-const rollup_plugin_uglify_1 = require("rollup-plugin-uglify");
+const typescript_1 = require("typescript");
+const rollup_plugin_terser_1 = require("rollup-plugin-terser");
 const plugin_node_resolve_1 = require("@rollup/plugin-node-resolve");
 const deal_scripts_dependencies_1 = require("./deal-scripts-dependencies");
 const chalk = require("chalk");
 const tools_1 = require("./tools");
 const chokidar = require("chokidar");
 const json = require('@rollup/plugin-json');
-//const rpt = require('@rollup/plugin-typescript');
-const rpt = require('rollup-plugin-typescript');
+const rpt = require('@rollup/plugin-typescript');
+//const rpt = require('rollup-plugin-typescript')
 const commonjs = require('@rollup/plugin-commonjs');
 const replace = require('@rollup/plugin-replace');
 const devOutputFile = 'debug/index.js';
@@ -61,19 +62,17 @@ async function compile(options, watch = false) {
                 browser: true,
             }),
             rpt({
-                //typescript,
+                typescript: typescript_1.default,
                 include: ['src/**/*.ts+(|x)', 'assets/**/*.ts+(|x)'],
             }),
             commonjs(),
             replace({
                 'process.env.NODE_ENV': JSON.stringify(prod ? 'production' : 'development'),
-            })
+            }),
+            prod && rollup_plugin_terser_1.terser()
         ],
         external: Object.keys(externals),
     };
-    if (prod) {
-        inputOptions.plugins.push(rollup_plugin_uglify_1.uglify({}));
-    }
     let outputOptions = {
         file: outputFile,
         format: 'umd',
@@ -109,7 +108,7 @@ async function compile(options, watch = false) {
             ignoreInitial: true,
         }).on('all', (event, path) => {
             if (event === 'add' && path.endsWith('.ts')) {
-                //console.log(event, path);
+                //console.log(event, path)
                 if (t) {
                     clearTimeout(t);
                     t = null;

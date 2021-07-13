@@ -9,7 +9,7 @@ export function getDoc(source) {
 				Doc: function () {
 					return {
 						kv: function (args) {
-							return args;
+							return args
 						}
 					}
 				}
@@ -17,8 +17,8 @@ export function getDoc(source) {
 		}
 	}
 
-	let func = new Function('require', 'exports', source);
-	let exports:any = {};
-	func(requireMethod, exports);
-	return exports.doc;
+	let func = new Function('require', 'exports', source)
+	let exports:any = {}
+	func(requireMethod, exports)
+	return exports.doc
 }

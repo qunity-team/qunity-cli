@@ -9,12 +9,12 @@ const serveHandler = require('serve-handler')
 import * as http from 'http'
 import * as https from 'https'
 
-let publicPath;
-const faviconFile = fs.readFileSync(path.dirname(__dirname) + '/assets/favicon.ico');
+let publicPath
+const faviconFile = fs.readFileSync(path.dirname(__dirname) + '/assets/favicon.ico')
 
 function handler(request, response) {
 	if(request.url === '/favicon.ico'){
-		response.end(faviconFile);
+		response.end(faviconFile)
 	}else{
 		return serveHandler(request, response, {
 			public: publicPath,
@@ -28,50 +28,50 @@ function handler(request, response) {
 					]
 				}
 			]
-		});
+		})
 	}
 }
 
 export function startHttpServe(options) {
-	console.log(chalk.green('launching...'));
+	console.log(chalk.green('launching...'))
 	return new Promise((resolve, reject) => {
-		const {port, host, folder, keyFile, certFile} = options;
+		const {port, host, folder, keyFile, certFile} = options
 
-		publicPath = path.resolve(folder);
+		publicPath = path.resolve(folder)
 		if (fs.existsSync(publicPath)) {
-			let sslOpts;
+			let sslOpts
 			if (keyFile && certFile) {
 				const keyContent = fs.readFileSync(keyFile, 'utf8'),
-					certContent = fs.readFileSync(certFile, 'utf8');
+					certContent = fs.readFileSync(certFile, 'utf8')
 
 				if (keyContent && certContent) {
 					sslOpts = {
 						key: keyContent,
 						cert: certContent
-					};
+					}
 				}
 			}
 
-			const server = sslOpts ? https.createServer(sslOpts, handler) : http.createServer(handler);
+			const server = sslOpts ? https.createServer(sslOpts, handler) : http.createServer(handler)
 
 			server.on('error', (err) => {
-				console.log(chalk.red(err.message));
-				reject(err.message);
-			});
+				console.log(chalk.red(err.message))
+				reject(err.message)
+			})
 
 			server.listen(port, host, function () {
-				let isSSL = !!sslOpts;
-				const schema = isSSL ? 'https' : 'http';
+				let isSSL = !!sslOpts
+				const schema = isSSL ? 'https' : 'http'
 
-				console.log(chalk.blue(`${schema} server start at ${schema}://${host}:${port}`));
-				console.log(chalk.blue(`${schema} path: ${publicPath}`));
+				console.log(chalk.blue(`${schema} server start at ${schema}://${host}:${port}`))
+				console.log(chalk.blue(`${schema} path: ${publicPath}`))
 
 				resolve({
 					host, port, publicPath, isSSL,
-				});
-			});
+				})
+			})
 		} else {
-			console.log(chalk.red('Public path is not exist: ' + publicPath));
+			console.log(chalk.red('Public path is not exist: ' + publicPath))
 			reject('Public path is not exist: ' + publicPath)
 		}
 	})

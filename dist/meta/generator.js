@@ -17,7 +17,7 @@ function generateMetaFiles(watch = false) {
         if (watch) {
             console.log(chalk.blue('start watch assets folder to generate meta files'));
             chokidar.watch('assets').on('all', (event, path) => {
-                //console.log(event, path);
+                //console.log(event, path)
                 if (t) {
                     clearTimeout(t);
                     t = null;

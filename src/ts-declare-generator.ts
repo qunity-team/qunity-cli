@@ -2,8 +2,8 @@
  * Created by rockyl on 2020-03-18.
  */
 
-import * as ts from 'typescript';
-import * as fs from 'fs-extra';
+import * as ts from 'typescript'
+import * as fs from 'fs-extra'
 
 const {
 	ClassDeclaration, EnumDeclaration, ExportKeyword, DefaultKeyword,
@@ -12,39 +12,39 @@ const {
 	NumericLiteral, StringLiteral, TrueKeyword, FalseKeyword,
 	PrivateKeyword, ProtectedKeyword, StaticKeyword,
 	NewExpression, PropertyAccessExpression, ObjectLiteralExpression, ArrayLiteralExpression,
-} = ts.SyntaxKind;
+} = ts.SyntaxKind
 
-const filterModifiers = [PrivateKeyword, ProtectedKeyword, StaticKeyword,];
-const filterDecorators = ['hidden'];
-const filterNamePrefix = ['_', '$'];
+const filterModifiers = [PrivateKeyword, ProtectedKeyword, StaticKeyword,]
+const filterDecorators = ['hidden']
+const filterNamePrefix = ['_', '$']
 
 const typeMapping = {
 	[AnyKeyword]: 'any',
 	[NumberKeyword]: 'number',
 	[StringKeyword]: 'string',
 	[BooleanKeyword]: 'boolean',
-};
+}
 
 const defaultTypeMapping = {
 	[NumericLiteral]: 'number',
 	[StringLiteral]: 'string',
 	[TrueKeyword]: 'boolean',
 	[FalseKeyword]: 'boolean',
-};
+}
 
-const editorInstructs = ['if'];
+const editorInstructs = ['if']
 
-const vector2Properties = ['x', 'y'];
+const vector2Properties = ['x', 'y']
 
 export function generateDeclaration(scriptFile) {
-	let code = fs.readFileSync(scriptFile, 'utf-8');
-	console.time('parse');
-	let sourceFile = ts.createSourceFile('test.ts', code, ts.ScriptTarget.ES2015);
-	console.timeEnd('parse');
+	let code = fs.readFileSync(scriptFile, 'utf-8')
+	console.time('parse')
+	let sourceFile = ts.createSourceFile('test.ts', code, ts.ScriptTarget.ES2015)
+	console.timeEnd('parse')
 
-	let enums = [];
-	let components = [];
-	let declaration;
+	let enums = []
+	let components = []
+	let declaration
 	ts.forEachChild(sourceFile, function (node:any) {
 		switch (node.kind) {
 			case ClassDeclaration:
@@ -53,258 +53,258 @@ export function generateDeclaration(scriptFile) {
 					node.modifiers[0].kind === ExportKeyword &&
 					node.modifiers[1].kind === DefaultKeyword
 				) {
-					let props = [];
-					let methods = [];
+					let props = []
+					let methods = []
 					declaration = {
 						name: node.name.text,
 						props,
 						methods,
-					};
-					putComment(node, declaration);
+					}
+					putComment(node, declaration)
 
-					let prop;
+					let prop
 					for (let member of node.members) {
 						if(!member.name){
-							continue;
+							continue
 						}
-						let name = member.name.text;
+						let name = member.name.text
 						if (filterMember(member, name)) {
-							continue;
+							continue
 						}
 						switch (member.kind) {
 							case PropertyDeclaration:
-								prop = getProp(member);
-								putEditorTag(member, prop);
+								prop = getProp(member)
+								putEditorTag(member, prop)
 								if (prop.type && prop.type !== 'any') {
-									props.push(prop);
+									props.push(prop)
 								}
-								break;
+								break
 							case MethodDeclaration:
 								let method:any = {
 									name,
-								};
-								putComment(member, method);
+								}
+								putComment(member, method)
 								if (member.parameters && member.parameters.length > 0) {
-									let parameters = method.parameters = [];
+									let parameters = method.parameters = []
 									for (let parameter of member.parameters) {
-										let p = getProp(parameter);
+										let p = getProp(parameter)
 										if (parameter.questionToken) {
-											p.optional = true;
+											p.optional = true
 										}
-										parameters.push(p);
+										parameters.push(p)
 									}
 								}
-								methods.push(method);
-								break;
+								methods.push(method)
+								break
 						}
 					}
 
-					components.push(declaration);
+					components.push(declaration)
 				}
-				break;
+				break
 			case EnumDeclaration:
-				let members = [];
+				let members = []
 				declaration = {
 					name: node.name.text,
 					members,
-				};
-				putComment(node, declaration);
+				}
+				putComment(node, declaration)
 
 				for (let member of node.members) {
 					let item:any = {
 						label: member.name.text,
-					};
-					let defaultValue = getDefaultValue(member);
-					if (defaultValue) {
-						item.value = defaultValue.value;
 					}
-					putComment(member, item);
-					members.push(item);
+					let defaultValue = getDefaultValue(member)
+					if (defaultValue) {
+						item.value = defaultValue.value
+					}
+					putComment(member, item)
+					members.push(item)
 				}
 
-				enums.push(declaration);
-				break;
+				enums.push(declaration)
+				break
 		}
 
-		return null;
-	});
+		return null
+	})
 
-	let result:any = {};
+	let result:any = {}
 	if (enums.length > 0) {
-		result.enums = enums;
+		result.enums = enums
 	}
 	if (components.length > 0) {
-		result.components = components;
+		result.components = components
 	}
-	return result;
+	return result
 }
 
 function filterMember(node, name) {
-	let skip = false;
+	let skip = false
 	for (let prefix of filterNamePrefix) {
 		if (name.startsWith(prefix)) {
-			skip = true;
-			break;
+			skip = true
+			break
 		}
 	}
 	if (!skip && node.modifiers) {
 		for (let modifier of node.modifiers) {
 			if (filterModifiers.includes(modifier.kind)) {
-				skip = true;
-				break;
+				skip = true
+				break
 			}
 		}
 	}
 	if (!skip && node.decorators && node.decorators.length > 0) {
 		for (let decorator of node.decorators) {
 			if (filterDecorators.includes(decorator.expression.text)) {
-				skip = true;
-				break;
+				skip = true
+				break
 			}
 		}
 	}
 
-	return skip;
+	return skip
 }
 
 function getType(node) {
 	if (node.type) {
-		let type = node.type;
+		let type = node.type
 		if (type.kind === TypeReference) {
-			return type.typeName.text;
+			return type.typeName.text
 		} else {
-			return typeMapping[type.kind];
+			return typeMapping[type.kind]
 		}
 	}
 }
 
 function getDefaultValue(node, preType?) {
 	if (node.initializer) {
-		let value, type, init, initializer = node.initializer;
+		let value, type, init, initializer = node.initializer
 		switch (initializer.kind) {
 			case NewExpression:
 				switch (preType) {
 					case 'Vector2':
-						value = [];
+						value = []
 						for (let i = 0, li = initializer.arguments.length; i < li; i++) {
-							const argument = initializer.arguments[i];
-							init = getInitializer(argument);
-							value.push(init.value);
+							const argument = initializer.arguments[i]
+							init = getInitializer(argument)
+							value.push(init.value)
 						}
-						break;
+						break
 				}
-				break;
+				break
 			case PropertyAccessExpression:
 				if (initializer.expression) {
-					type = initializer.expression.text;
+					type = initializer.expression.text
 				}
-				value = node.initializer.name.text;
-				break;
+				value = node.initializer.name.text
+				break
 			case ArrayLiteralExpression: //数组暂时不识别
-				//type = 'array';
-				break;
+				//type = 'array'
+				break
 			case ObjectLiteralExpression:
 				switch (preType) {
 					case 'vector2':
-						value = {};
+						value = {}
 						for (let property of initializer.properties) {
-							init = getInitializer(property.initializer);
-							let field = property.name.escapedText;
+							init = getInitializer(property.initializer)
+							let field = property.name.escapedText
 							if (vector2Properties.includes(field)) {
-								value[field] = init.value;
+								value[field] = init.value
 							}
 						}
-						break;
+						break
 				}
-				break;
+				break
 			default:
-				init = getInitializer(initializer);
-				type = init.type;
-				value = init.value;
+				init = getInitializer(initializer)
+				type = init.type
+				value = init.value
 		}
 		let dv:any = {
 			value,
-		};
-		if (type !== undefined) {
-			dv.type = type;
 		}
-		return dv;
+		if (type !== undefined) {
+			dv.type = type
+		}
+		return dv
 	}
 }
 
 function getInitializer(initializer) {
-	let value, type = defaultTypeMapping[initializer.kind];
-	let text = initializer.text;
+	let value, type = defaultTypeMapping[initializer.kind]
+	let text = initializer.text
 	switch (initializer.kind) {
 		case NumericLiteral:
-			value = parseFloat(text);
-			break;
+			value = parseFloat(text)
+			break
 		case StringLiteral:
-			value = text;
-			break;
+			value = text
+			break
 		case TrueKeyword:
-			value = true;
-			break;
+			value = true
+			break
 		case FalseKeyword:
-			value = false;
-			break;
+			value = false
+			break
 	}
 
-	return {type, value};
+	return {type, value}
 }
 
 function getComment(node) {
 	if (node.jsDoc) {
-		let jsDoc = node.jsDoc[node.jsDoc.length - 1];
-		return jsDoc.comment;
+		let jsDoc = node.jsDoc[node.jsDoc.length - 1]
+		return jsDoc.comment
 	}
 }
 
 function putComment(node, target) {
-	let c = getComment(node);
+	let c = getComment(node)
 	if (c) {
-		target.comment = c;
+		target.comment = c
 	}
 }
 
 function putEditorTag(node, target) {
 	if (node.jsDoc) {
-		let jsDoc = node.jsDoc[node.jsDoc.length - 1];
+		let jsDoc = node.jsDoc[node.jsDoc.length - 1]
 		if (jsDoc.tags) {
-			let instructions = {};
+			let instructions = {}
 			for (let tag of jsDoc.tags) {
-				let tagName = tag.tagName.text;
+				let tagName = tag.tagName.text
 				if (editorInstructs.includes(tagName)) {
-					instructions[tagName] = tag.comment;
+					instructions[tagName] = tag.comment
 				}
 			}
 			if (Object.keys(instructions).length > 0) {
-				target.instructions = instructions;
+				target.instructions = instructions
 			}
 		}
 	}
 }
 
 function getProp(node) {
-	let name = node.name.text;
+	let name = node.name.text
 
-	let type = getType(node);
-	let defaultValue = getDefaultValue(node, type);
+	let type = getType(node)
+	let defaultValue = getDefaultValue(node, type)
 	if (!type) {
 		if (defaultValue && defaultValue.hasOwnProperty('type')) {
-			type = defaultValue.type;
+			type = defaultValue.type
 		} else {
-			type = 'any';
+			type = 'any'
 		}
 	}
 
 	let prop:any = {
 		name,
 		type,
-	};
-	if (defaultValue && defaultValue.hasOwnProperty('value')) {
-		prop.default = defaultValue.value;
 	}
-	putComment(node, prop);
-	return prop;
+	if (defaultValue && defaultValue.hasOwnProperty('value')) {
+		prop.default = defaultValue.value
+	}
+	putComment(node, prop)
+	return prop
 }

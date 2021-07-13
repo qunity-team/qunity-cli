@@ -2,40 +2,40 @@
  * Created by rockyl on 2020-03-16.
  */
 
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as glob from 'glob';
+import * as fs from 'fs-extra'
+import * as path from 'path'
+import * as glob from 'glob'
 
-const targetId = 'register-scripts';
+const targetId = 'register-scripts'
 
 function getModuleName(file) {
-	let metaFile = file + '.meta';
+	let metaFile = file + '.meta'
 	if(!fs.existsSync(metaFile)){
-		return;
+		return
 	}
-	let metaContent = JSON.parse(fs.readFileSync(metaFile, 'utf-8'));
-	let fileContent = fs.readFileSync(file, 'utf-8');
-	let result = fileContent.match(/export default class (\w+)/);
+	let metaContent = JSON.parse(fs.readFileSync(metaFile, 'utf-8'))
+	let fileContent = fs.readFileSync(file, 'utf-8')
+	let result = fileContent.match(/export default class (\w+)/)
 
 	if (result) {
-		return metaContent.uuid;
+		return metaContent.uuid
 	}
 }
 
 function getScripts() {
-	let files = glob.sync('./assets/**/*.ts');
+	let files = glob.sync('./assets/**/*.ts')
 
-	let scriptsImportList = [];
-	let scriptsList = [];
-	let index = 0;
+	let scriptsImportList = []
+	let scriptsList = []
+	let index = 0
 	for(let file of files){
-		let moduleName = getModuleName(file);
+		let moduleName = getModuleName(file)
 		if (moduleName) {
-			let localModuleName = '/' + path.relative('./assets', file).replace('.ts', '');
-			scriptsImportList.push(`import {default as script_${index}} from "${file}";`);
-			scriptsList.push(`'uuid://${moduleName}': script_${index},`);
-			scriptsList.push(`'${localModuleName}': script_${index},`);
-			index ++;
+			let localModuleName = '/' + path.relative('./assets', file).replace('.ts', '')
+			scriptsImportList.push(`import {default as script_${index}} from "${file}";`)
+			scriptsList.push(`'uuid://${moduleName}': script_${index},`)
+			scriptsList.push(`'${localModuleName}': script_${index},`)
+			index ++
 		}
 	}
 
@@ -45,9 +45,9 @@ ${scriptsImportList.join('\n')}
 export default function register(app) {
 	app.registerComponentDefs({
 ${scriptsList.join('\n')}
-	});
+	})
 }
-`;
+`
 }
 
 export function dealScriptsDependencies() {
@@ -56,18 +56,18 @@ export function dealScriptsDependencies() {
 
 		resolveId(id) {
 			if (id === targetId) {
-				return id;
+				return id
 			}
 
-			return null;
+			return null
 		},
 
 		load(id) {
 			if (id === targetId) {
-				return getScripts();
+				return getScripts()
 			}
 
-			return null;
+			return null
 		}
 	}
 

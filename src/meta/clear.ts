@@ -5,25 +5,25 @@
 import glob from 'glob'
 import * as chalk from 'chalk'
 import fs from 'fs-extra'
-import {exit} from "../tools";
+import {exit} from "../tools"
 
 export function clearMetaFiles() {
 	if (fs.existsSync('assets')) {
-		executeOnce();
-		console.log(chalk.cyan('clear meta files successfully'));
+		executeOnce()
+		console.log(chalk.cyan('clear meta files successfully'))
 	} else {
-		exit('assets folder not exists', 1);
+		exit('assets folder not exists', 1)
 	}
 }
 
 function executeOnce() {
-	let files = glob.sync('assets/**/*.meta');
+	let files = glob.sync('assets/**/*.meta')
 
 	for (let file of files) {
-		let bodyFile = file.replace('.meta', '');
+		let bodyFile = file.replace('.meta', '')
 		if (!fs.existsSync(bodyFile)) {
-			fs.unlinkSync(file);
-			console.log(chalk.green('remove ' + file + '.meta'));
+			fs.unlinkSync(file)
+			console.log(chalk.green('remove ' + file + '.meta'))
 		}
 	}
 }

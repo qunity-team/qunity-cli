@@ -40,7 +40,7 @@ ${scriptsImportList.join('\n')}
 export default function register(app) {
 	app.registerComponentDefs({
 ${scriptsList.join('\n')}
-	});
+	})
 }
 `;
 }

@@ -5,14 +5,13 @@
 const program = require('commander');
 const {exit, startHttpServe} = require("../dist");
 
-program
-	.option('-h, --host [string]', 'server host', 'localhost')
-	.option('-p, --port [number]', 'server port', 3001)
-	.option('-f, --folder [string]', 'folder of static files', './')
-	.option('-k, --key-file [string]', 'ssl key file')
-	.option('-c, --cert-file [string]', 'ssl cert file')
-	.allowUnknownOption(true)
-	.parse(process.argv);
+program.option('--host [string]', 'server host', '0.0.0.0')
+program.option('-p, --port [number]', 'server port', 3030)
+program.option('-f, --folder [string]', 'folder of static files', './')
+program.option('-k, --key-file [string]', 'ssl key file')
+program.option('-c, --cert-file [string]', 'ssl cert file')
+program.allowUnknownOption(true)
+program.parse(process.argv);
 
 async function execute() {
 	startHttpServe({

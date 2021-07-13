@@ -2,70 +2,70 @@
  * Created by rockyl on 2018/7/5.
  */
 
-import {spawn} from 'child_process';
-import * as crypto from 'crypto';
-import * as fs from "fs-extra";
+import {spawn} from 'child_process'
+import * as crypto from 'crypto'
+import * as fs from "fs-extra"
 
 export function exit(err, code = 1) {
-	console.error(err);
-	process.exit(code);
+	console.error(err)
+	process.exit(code)
 }
 
 export function childProcess(cmd, params, cwd = process.cwd(), printLog = true) {
-	let options: any = {};
+	let options: any = {}
 	if (cwd) {
-		options.cwd = cwd;
+		options.cwd = cwd
 	}
-	const proc = spawn(cmd, params, options);
+	const proc = spawn(cmd, params, options)
 
 	if (printLog) {
 		proc.stdout.on('data', (data) => {
-			let txt = data.toString();
-			txt = txt.substr(0, txt.length - 1);
-			console.log(txt);
-		});
+			let txt = data.toString()
+			txt = txt.substr(0, txt.length - 1)
+			console.log(txt)
+		})
 
 		proc.stderr.on('data', (data) => {
-			console.log(data.toString());
-		});
+			console.log(data.toString())
+		})
 	}
 
-	return proc;
+	return proc
 }
 
 export function childProcessSync(cmd, params, cwd?, printLog = true) {
 	return new Promise((resolve, reject) => {
-		let proc = childProcess(cmd, params, cwd, printLog);
+		let proc = childProcess(cmd, params, cwd, printLog)
 
 		proc.on('close', (code) => {
 			if (code === 0) {
-				resolve();
+				resolve()
 			} else {
-				reject(code);
+				reject(code)
 			}
-		});
-	});
+		})
+	})
 }
 
 export function gitClone(url, path, cwd?) {
-	return childProcessSync('git', ['clone', url, path], cwd);
+	return childProcessSync('git', ['clone', url, path], cwd)
 }
 
 export function yarnInstall(cwd?) {
-	return childProcessSync('yarn', [], cwd);
+	return childProcessSync('yarn', [], cwd)
 }
 
 export function yarnRun(scriptName, cwd?) {
-	return childProcessSync('yarn', ['run', scriptName], cwd);
+	return childProcessSync('yarn', ['run', scriptName], cwd)
 }
 
 export function getMd5(fileOrBuffer) {
-	let buffer = fileOrBuffer;
+	let buffer = fileOrBuffer
 	if (typeof fileOrBuffer === 'string') {
-		buffer = fs.readFileSync(fileOrBuffer);
+		buffer = fs.readFileSync(fileOrBuffer)
 	}
 
-	let hash = crypto.createHash('md5');
-	hash.update(buffer);
-	return hash.digest('hex');
+	let hash = crypto.createHash('md5')
+	hash.update(buffer)
+	return hash.digest('hex')
 }
