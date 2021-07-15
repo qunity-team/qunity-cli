@@ -3,6 +3,7 @@
  * Created by rockyl on 2020-03-18.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateDeclaration = void 0;
 const ts = require("typescript");
 const fs = require("fs-extra");
 const { ClassDeclaration, EnumDeclaration, ExportKeyword, DefaultKeyword, PropertyDeclaration, MethodDeclaration, TypeReference, AnyKeyword, NumberKeyword, StringKeyword, BooleanKeyword, NumericLiteral, StringLiteral, TrueKeyword, FalseKeyword, PrivateKeyword, ProtectedKeyword, StaticKeyword, NewExpression, PropertyAccessExpression, ObjectLiteralExpression, ArrayLiteralExpression, } = ts.SyntaxKind;

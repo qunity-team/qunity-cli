@@ -3,6 +3,7 @@
  * Created by rockyl on 2020-03-16.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.dealScriptsDependencies = void 0;
 const fs = require("fs-extra");
 const path = require("path");
 const glob = require("glob");

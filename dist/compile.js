@@ -3,6 +3,7 @@
  * Created by rockyl on 2020-03-18.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.compile = void 0;
 const fs = require("fs-extra");
 const rollup = require("rollup");
 const typescript_1 = require("typescript");
@@ -14,7 +15,6 @@ const tools_1 = require("./tools");
 const chokidar = require("chokidar");
 const json = require('@rollup/plugin-json');
 const rpt = require('@rollup/plugin-typescript');
-//const rpt = require('rollup-plugin-typescript')
 const commonjs = require('@rollup/plugin-commonjs');
 const replace = require('@rollup/plugin-replace');
 const devOutputFile = 'debug/index.js';

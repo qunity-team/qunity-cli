@@ -3,6 +3,7 @@
  * Created by rockyl on 2020-03-17.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.clearMetaFiles = void 0;
 const glob_1 = require("glob");
 const chalk = require("chalk");
 const fs_extra_1 = require("fs-extra");

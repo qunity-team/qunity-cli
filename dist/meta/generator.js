@@ -3,6 +3,7 @@
  * Created by rockyl on 2020-03-16.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateMetaFile = exports.generateMetaFiles = void 0;
 const path = require("path");
 const glob = require("glob");
 const chalk = require("chalk");

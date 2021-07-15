@@ -5,11 +5,10 @@
  * pack project
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.pack = void 0;
 const path = require("path");
 const fs = require("fs-extra");
-const glob = require("glob");
 const compile_1 = require("./compile");
-const doc_1 = require("./doc");
 //import * as packSheet from "sheet-packer"
 const tools_1 = require("./tools");
 const node_html_parser_1 = require("node-html-parser");
@@ -42,39 +41,43 @@ async function compileBundle(options, manifest, projectReleasePath) {
 function assetsTokenFilter(token) {
     return token.type === 'String' && token.value.startsWith('\'' + assetProtocol);
 }
-async function packSheets(projectReleasePath) {
-    let assetsPath = 'assets';
-    let projectReleaseAssetsPath = path.join(projectReleasePath, 'assets');
-    await fs.ensureDir(projectReleaseAssetsPath);
-    let sceneFiles = glob.sync(assetsPath + '/**/*.qnt');
+/*async function packSheets(projectReleasePath) {
+    let assetsPath = 'assets'
+    let projectReleaseAssetsPath = path.join(projectReleasePath, 'assets')
+    await fs.ensureDir(projectReleaseAssetsPath)
+
+    let sceneFiles = glob.sync(assetsPath + '/!**!/!*.qnt')
+
     for (let sceneFile of sceneFiles) {
-        let sceneContent = await fs.readFile(sceneFile, 'utf-8');
-        let doc = doc_1.getDoc(sceneContent);
-        let assets = doc.assets;
-        let files = assets.map(asset => asset.url).filter(asset => asset.endsWith('.png'));
-        let { sheets, singles } = await packSheet(files, {});
+        let sceneContent = await fs.readFile(sceneFile, 'utf-8')
+        let doc = getDoc(sceneContent)
+        let assets = doc.assets
+        let files = assets.map(asset => asset.url).filter(asset => asset.endsWith('.png'))
+        let {sheets, singles} = await packSheet(files, {})
+
         //console.log(assets, sheets, singles)
-        let sheetIndex = 0;
-        for (let { frames, buffer } of sheets) {
-            let keys = Object.keys(frames);
+        let sheetIndex = 0
+        for (let {frames, buffer} of sheets) {
+            let keys = Object.keys(frames)
             for (let url of keys) {
-                let asset = assets.find(asset => asset.url === url);
+                let asset = assets.find(asset => asset.url === url)
                 if (asset) {
-                    let relativePath = path.relative('assets', url);
-                    frames[relativePath] = frames[url];
-                    delete frames[url];
-                    frames[relativePath].uuid = asset.uuid;
+                    let relativePath = path.relative('assets', url)
+                    frames[relativePath] = frames[url]
+                    delete frames[url]
+
+                    frames[relativePath].uuid = asset.uuid
                 }
             }
-            await fs.writeFile(path.join(projectReleaseAssetsPath, 'sheet_' + sheetIndex + '.sht'), JSON.stringify(frames));
-            await fs.writeFile(path.join(projectReleaseAssetsPath, 'sheet_' + sheetIndex + '.png'), buffer);
-            sheetIndex++;
+            await fs.writeFile(path.join(projectReleaseAssetsPath, 'sheet_' + sheetIndex + '.sht'), JSON.stringify(frames))
+            await fs.writeFile(path.join(projectReleaseAssetsPath, 'sheet_' + sheetIndex + '.png'), buffer)
+            sheetIndex++
         }
         for (let single of singles) {
-            await fs.copy(single, path.join(projectReleasePath, single));
+            await fs.copy(single, path.join(projectReleasePath, single))
         }
     }
-}
+}*/
 async function parseIndexHtml(projectReleasePath, bundleFile) {
     let scriptMapping = {};
     let indexTemplate = await fs.readFile('index.html', 'utf-8');

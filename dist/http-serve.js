@@ -3,6 +3,7 @@
  * Created by rockyl on 2020-03-17.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.startHttpServe = void 0;
 const path = require("path");
 const fs = require("fs-extra");
 const chalk = require("chalk");

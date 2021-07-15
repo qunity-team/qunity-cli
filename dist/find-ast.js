@@ -3,6 +3,7 @@
  * Created by rockyl on 2020-05-12.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTokens = void 0;
 const esprima_1 = require("esprima");
 const crypto_1 = require("crypto");
 const caches = {};

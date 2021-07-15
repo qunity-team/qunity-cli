@@ -49,12 +49,12 @@ function assetsTokenFilter(token) {
 	return token.type === 'String' && token.value.startsWith('\'' + assetProtocol)
 }
 
-async function packSheets(projectReleasePath) {
+/*async function packSheets(projectReleasePath) {
 	let assetsPath = 'assets'
 	let projectReleaseAssetsPath = path.join(projectReleasePath, 'assets')
 	await fs.ensureDir(projectReleaseAssetsPath)
 
-	let sceneFiles = glob.sync(assetsPath + '/**/*.qnt')
+	let sceneFiles = glob.sync(assetsPath + '/!**!/!*.qnt')
 
 	for (let sceneFile of sceneFiles) {
 		let sceneContent = await fs.readFile(sceneFile, 'utf-8')
@@ -85,7 +85,7 @@ async function packSheets(projectReleasePath) {
 			await fs.copy(single, path.join(projectReleasePath, single))
 		}
 	}
-}
+}*/
 
 async function parseIndexHtml(projectReleasePath, bundleFile) {
 	let scriptMapping = {}

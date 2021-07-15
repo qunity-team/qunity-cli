@@ -3,6 +3,7 @@
  * Created by rockyl on 2020-05-12.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getDoc = void 0;
 function getDoc(source) {
     function requireMethod(id) {
         if (id === 'qunity') {
